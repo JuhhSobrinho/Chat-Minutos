@@ -8,6 +8,10 @@
     ],
     "rewrites": [
       {
+        "source": "/socket.io/**",
+        "destination": "/socket.io/socket.io.js"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }
