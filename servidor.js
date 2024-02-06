@@ -2,6 +2,8 @@ const http = require('http');
 const express = require('express');
 const aplicacao = express();
 
+const servidor = require('./servidor');
+
 const port = 3000;
 
 const servidorHttp = http.createServer(aplicacao);
@@ -16,8 +18,6 @@ io.addListener('connection', (socket) => {
         io.emit('newMsg', dadosMensagem);
     });
 })
-
-
 
 
 

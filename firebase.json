@@ -9,7 +9,11 @@
     "rewrites": [
       {
         "source": "/socket.io/**",
-        "destination": "/socket.io/socket.io.js"
+        "destination": "/io/socket.io.js"
+      },
+      {
+        "source": "/servidor/**",
+        "function": "app"
       },
       {
         "source": "**",
