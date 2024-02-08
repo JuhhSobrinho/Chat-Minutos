@@ -1,8 +1,7 @@
+// No arquivo servidor.js
 const http = require('http');
 const express = require('express');
 const aplicacao = express();
-
-const servidor = require('./servidor');
 
 const port = 3000;
 
@@ -17,10 +16,7 @@ io.addListener('connection', (socket) => {
     socket.on('newMsg', (dadosMensagem) => {
         io.emit('newMsg', dadosMensagem);
     });
-})
-
-
+});
 
 servidorHttp.listen(port, '192.168.0.3');
-
-
+console.log('Servidor rodando na porta', port);

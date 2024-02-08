@@ -1,7 +1,13 @@
 const btnEnviar = document.getElementById('enviar');
 const inputMensagem = document.getElementById('texto');
 const chat = document.getElementById('mensagens');
+
+
 const socket = io();
+console.log('Conectado ao servidor');
+
+
+
 
 const chatPoup = document.getElementsByClassName('msg-topicos');
 
