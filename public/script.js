@@ -20,7 +20,10 @@ if (user) {
 const socket = new WebSocket('wss://seu-app-netlify.netlify.app/.netlify/functions/server');
 
 
-
+socket.addEventListener('open', (event) => {
+    console.log('Conexão WebSocket aberta:', event);
+  });
+  
 
 socket.onopen = (event) => {
     console.log('Conectado ao servidor WebSocket');
