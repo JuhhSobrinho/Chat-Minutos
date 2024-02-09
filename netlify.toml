@@ -2,3 +2,7 @@
   from = "/*"
   to = "/public/:splat"
   status = 200
+[[redirects]]
+  from = "/socket.io/*"
+  to = "/.netlify/functions/server/:splat"
+  status = 200
