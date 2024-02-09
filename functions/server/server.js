@@ -12,6 +12,16 @@ const io = new SocketServer({
   },
 });
 
+// Lidar com conexão via WebSocket
+wss.on('connection', (ws) => {
+  console.log('Cliente conectado via WebSocket');
+
+  ws.on('message', (message) => {
+    console.log(`Mensagem recebida via WebSocket: ${message}`);
+    io.emit('newMsg', JSON.parse(message));
+  });
+});
+
 // Configurar a rota /socket.io/ para o servidor Socket.IO
 io.httpServer.on('request', (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
@@ -26,11 +36,6 @@ exports.handler = async (event) => {
   });
 
   io.attach(wss);
-
-  ws.on('message', (message) => {
-    console.log(`Mensagem recebida via WebSocket: ${message}`);
-    io.emit('newMsg', JSON.parse(message));
-  });
 
   return {
     statusCode: 200,
