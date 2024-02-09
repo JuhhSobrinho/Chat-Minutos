@@ -17,9 +17,8 @@ if (user) {
 }
 
 // Conectar ao servidor WebSocket
-const socket = io('https://seu-app-netlify.netlify.app', {
-  transports: ['websocket', 'polling'],
-});
+const socket = new WebSocket('wss://seu-app-netlify.netlify.app/.netlify/functions/server');
+
 
 
 
