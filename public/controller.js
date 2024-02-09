@@ -18,10 +18,10 @@ btnUser.addEventListener('click', () => {
         user = userInput.value;
         seTLocarStorage("user", user);
 
-        window.location.href = './chat.html';
+        window.location.href = 'public/chat.html';
     }
 })
 
 if (geTLocalStorage("user")) {
-    window.location.href = './chat.html';
+    window.location.href = 'public/chat.html';
 }

@@ -1,2 +1,6 @@
 [build]
-  functions = "functions"
+  functions = "functions/server/server.js"
+[[redirects]]
+  from = "/public"
+  to = "/*"
+  status = 200

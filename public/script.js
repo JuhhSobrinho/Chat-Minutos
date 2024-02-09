@@ -20,7 +20,7 @@ const user = geTLocalStorage("user");
 if (user) {
     userNome.innerText = user;
 } else {
-    window.location.href = './index.html';
+    window.location.href = 'public/index.html';
 }
 
 
