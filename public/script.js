@@ -17,7 +17,7 @@ if (user) {
 }
 
 // Conectar ao servidor WebSocket
-const socket = new WebSocket('wss://seu-app-netlify.netlify.app/.netlify/functions/server');
+const socket = new WebSocket('wss://chat-minuto.netlify.app/.netlify/functions/server');
 
 
 socket.addEventListener('open', (event) => {
