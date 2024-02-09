@@ -17,13 +17,17 @@ if (user) {
 }
 
 // Conectar ao servidor WebSocket
-const socket = new WebSocket('wss://seu-app-netlify.netlify.app');
+const socket = new WebSocket('wss://seu-app-netlify.netlify.app/.netlify/functions/server');
 
 socket.onopen = (event) => {
     console.log('Conectado ao servidor WebSocket');
 };
 
 socket.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    console.log('Mensagem recebida:', message);
+
+
     const dadosMensagem = JSON.parse(event.data);
 
     // Lógica para processar a mensagem recebida e atualizar o DOM
@@ -54,6 +58,14 @@ socket.onmessage = (event) => {
             div.style.alignItems = 'flex-end';
         }
     }
+};
+
+socket.onclose = (event) => {
+    console.log('Conexão fechada');
+};
+
+const sendMessage = (message) => {
+    socket.send(JSON.stringify({ type: 'newMsg', data: message }));
 };
 
 btnEnviar.addEventListener('click', () => {
