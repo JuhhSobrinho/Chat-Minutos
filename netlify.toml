@@ -1,6 +1,7 @@
 [build]
-  functions = "functions"
+  functions = "/.netlify/functions/server/:splat"
 [[redirects]]
-  from = "/public"
-  to = "/*"
+  from = "/*"
+  to = "/public/:splat"
   status = 200
+
