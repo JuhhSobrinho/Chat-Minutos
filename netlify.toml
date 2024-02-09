@@ -1,5 +1,5 @@
 [build]
-  functions = "functions/server/server.js"
+  functions = "functions"
 [[redirects]]
   from = "/public"
   to = "/*"
