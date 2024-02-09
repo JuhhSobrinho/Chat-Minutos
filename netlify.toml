@@ -1,3 +1,5 @@
+[build]
+  functions = "/.netlify/functions/server/:splat"
 [[redirects]]
   from = "/*"
   to = "/public/:splat"
