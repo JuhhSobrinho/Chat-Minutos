@@ -4,7 +4,8 @@
   "description": "chat servidor",
   "main": "servidor.js",
   "scripts": {
-    "test": "echo "
+    "test": "echo ",
+    "build": "npm run build"
   },
   "repository": {
     "type": "git",
