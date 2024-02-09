@@ -1,39 +1,46 @@
-const { Server } = require('socket.io');
+const { createServer } = require('http');
+const { Server } = require('ws');
+const { Server: SocketServer } = require('socket.io');
 
-exports.handler = async (event) => {
-  // Verifica se é uma solicitação de atualização do WebSocket
-  if (event.headers.upgrade === 'websocket') {
-    const io = new Server();
-    
-    io.on('connection', (socket) => {
-      console.log('Cliente conectado via WebSocket');
+const httpServer = createServer();
+const wss = new Server({ noServer: true });
 
-      socket.on('message', (message) => {
-        console.log(`Mensagem recebida via WebSocket: ${message}`);
+wss.on('connection', (ws) => {
+  console.log('Cliente conectado via WebSocket');
 
-        // Lógica adicional, se necessário
+  ws.on('message', (message) => {
+    console.log(`Mensagem recebida via WebSocket: ${message}`);
+    io.emit('newMsg', JSON.parse(message));
+  });
+});
 
-        // Envia uma mensagem de volta
-        socket.send('Mensagem recebida pelo servidor.');
-      });
-    });
-
-    // Retornar uma resposta apropriada para solicitação de upgrade WebSocket
-    return {
-      statusCode: 101, // Switching Protocols
-      headers: {
-        ...event.headers,
-        'Connection': 'upgrade',
-        'Upgrade': 'websocket',
-      },
-      body: '',
-      isBase64Encoded: false,
-    };
+const io = new SocketServer(httpServer, {
+  cors: {
+    origin: 'https://chat-minuto.netlify.app', // Altere para o seu domínio
+    methods: ['GET', 'POST']
   }
+});
 
-  // Se não for uma solicitação de upgrade WebSocket, responda como HTTP padrão
-  return {
-    statusCode: 200,
-    body: 'WebSocket servidor ativo.',
-  };
-};
+io.on('connection', (socket) => {
+  console.log('Cliente conectado via Socket.IO');
+
+  socket.on('newMsg', (dadosMensagem) => {
+    console.log('Mensagem recebida via Socket.IO:', dadosMensagem);
+  });
+});
+
+io.httpServer.on('request', (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
+  response.end('WebSocket servidor ativo.');
+});
+
+httpServer.on('upgrade', (request, socket, head) => {
+  wss.handleUpgrade(request, socket, head, (ws) => {
+    wss.emit('connection', ws, request);
+  });
+});
+
+const PORT = process.env.PORT || 3000;
+httpServer.listen(PORT, () => {
+  console.log(`Servidor WebSocket ouvindo na porta ${PORT}`);
+});
