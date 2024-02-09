@@ -1,8 +1,4 @@
 [[redirects]]
-  from = "/meu-caminho/*"
-  to = "/.netlify/functions/server/:splat"
-  status = 200
-[[redirects]]
   from = "/*"
   to = "/public/:splat"
   status = 200
