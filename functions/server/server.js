@@ -7,9 +7,9 @@ const wss = new Server({ noServer: true });
 // Criar servidor Socket.IO
 const io = new SocketServer({
   cors: {
-    origin: 'https://chat-minuto.netlify.app', // Seu domínio
-    methods: ['GET', 'POST']
-  }
+    origin: 'https://chat-minuto.netlify.app', // Altere para o seu domínio
+    methods: ['GET', 'POST'],
+  },
 });
 
 // Configurar a rota /socket.io/ para o servidor Socket.IO
@@ -26,6 +26,11 @@ exports.handler = async (event) => {
   });
 
   io.attach(wss);
+
+  ws.on('message', (message) => {
+    console.log(`Mensagem recebida via WebSocket: ${message}`);
+    io.emit('newMsg', JSON.parse(message));
+  });
 
   return {
     statusCode: 200,
