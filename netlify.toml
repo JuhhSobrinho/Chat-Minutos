@@ -1,7 +1,8 @@
 [[redirects]]
-  from = "/socket.io/*"
-  to = "/.netlify/functions/server/:splat"
+  from = "/.netlify/functions/server"
+  to = "/.netlify/functions/server"
   status = 200
+  force = true
 
 [[redirects]]
   from = "/*"
