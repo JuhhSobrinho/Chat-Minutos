@@ -1,9 +1,16 @@
 const { createServer } = require('http');
-const { Server } = require('ws');
 const { Server: SocketServer } = require('socket.io');
+const { Server: WebSocketServer } = require('ws');
 
 const httpServer = createServer();
-const wss = new Server({ noServer: true });
+const io = new SocketServer(httpServer, {
+  cors: {
+    origin: 'https://chat-minuto.netlify.app', // Altere para o seu domínio
+    methods: ['GET', 'POST']
+  }
+});
+
+const wss = new WebSocketServer({ noServer: true });
 
 wss.on('connection', (ws) => {
   console.log('Cliente conectado via WebSocket');
@@ -12,13 +19,6 @@ wss.on('connection', (ws) => {
     console.log(`Mensagem recebida via WebSocket: ${message}`);
     io.emit('newMsg', JSON.parse(message));
   });
-});
-
-const io = new SocketServer(httpServer, {
-  cors: {
-    origin: 'https://chat-minuto.netlify.app', // Altere para o seu domínio
-    methods: ['GET', 'POST']
-  }
 });
 
 io.on('connection', (socket) => {
@@ -40,7 +40,19 @@ httpServer.on('upgrade', (request, socket, head) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-httpServer.listen(PORT, () => {
-  console.log(`Servidor WebSocket ouvindo na porta ${PORT}`);
-});
+const handler = async (event) => {
+  try {
+    const PORT = process.env.PORT || 3000;
+    httpServer.listen(PORT, () => {
+      console.log(`Servidor WebSocket ouvindo na porta ${PORT}`);
+    });
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: 'Function executada com sucesso' }),
+    };
+  } catch (error) {
+    return { statusCode: 500, body: error.toString() };
+  }
+};
+
+module.exports = { handler };
