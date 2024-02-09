@@ -62,11 +62,11 @@ socket.onmessage = (event) => {
 
 socket.onclose = (event) => {
     console.log('Conexão fechada');
-};
+  };
 
-const sendMessage = (message) => {
+  const sendMessage = (message) => {
     socket.send(JSON.stringify({ type: 'newMsg', data: message }));
-};
+  };
 
 btnEnviar.addEventListener('click', () => {
     const mensagem = inputMensagem.value;
