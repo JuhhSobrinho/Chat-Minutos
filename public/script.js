@@ -1,21 +1,14 @@
 const btnEnviar = document.getElementById('enviar');
 const inputMensagem = document.getElementById('texto');
 const chat = document.getElementById('mensagens');
-const socket = io();
-
+const userNome = document.getElementById('user-titulo');
 const chatPoup = document.getElementsByClassName('msg-topicos');
 
-
-const userNome = document.getElementById('user-titulo');
-
-
 function geTLocalStorage(chave) {
-    return JSON.parse(localStorage.getItem(chave)); ///nesse caso é o contrario, json pega e transforma em objeto oq era texto/string
+    return JSON.parse(localStorage.getItem(chave));
 }
 
-
 const user = geTLocalStorage("user");
-
 
 if (user) {
     userNome.innerText = user;
@@ -23,27 +16,19 @@ if (user) {
     window.location.href = 'public/index.html';
 }
 
+// Conectar ao servidor WebSocket
+const socket = new WebSocket('wss://seu-app-netlify.netlify.app');
 
+socket.onopen = (event) => {
+    console.log('Conectado ao servidor WebSocket');
+};
 
-btnEnviar.addEventListener('click', () => {
-    const mensagem = inputMensagem.value;
-    if (inputMensagem.value !== "") {
-        const dadosMensagem = {
-            mensagem: mensagem,
-            usuario: user
-        };
+socket.onmessage = (event) => {
+    const dadosMensagem = JSON.parse(event.data);
 
-        socket.emit('newMsg', dadosMensagem);
-
-        inputMensagem.value = "";
-    }
-})
-
-
-socket.addEventListener('newMsg', (dadosMensagem) => {
+    // Lógica para processar a mensagem recebida e atualizar o DOM
     const msgContainer = document.createElement('div');
     msgContainer.classList.add('msg-topicos');
-
 
     const msgElement = document.createElement('li');
     msgElement.textContent = dadosMensagem.mensagem;
@@ -58,23 +43,30 @@ socket.addEventListener('newMsg', (dadosMensagem) => {
 
     chat.appendChild(msgContainer);
 
-
-
     for (const div of chatPoup) {
-        // Obtém o elemento <h1> dentro de cada div
         const h1Element = div.querySelector('h1');
         const liElement = div.querySelector('li');
-
-        // Acessa o texto dentro do elemento <h1>
         const value = h1Element.textContent || h1Element.innerText;
 
         if (value === user) {
-            console.log("digasim");
             liElement.style.backgroundColor = '#2E87A1';
             liElement.style.borderRadius = "14px 14px 3px 14px";
             div.style.alignItems = 'flex-end';
         }
-        
-        console.log(value);
+    }
+};
+
+btnEnviar.addEventListener('click', () => {
+    const mensagem = inputMensagem.value;
+    if (inputMensagem.value !== "") {
+        const dadosMensagem = {
+            mensagem: mensagem,
+            usuario: user
+        };
+
+        // Enviar mensagem para o servidor WebSocket
+        socket.send(JSON.stringify(dadosMensagem));
+
+        inputMensagem.value = "";
     }
 });
