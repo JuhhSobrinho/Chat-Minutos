@@ -17,7 +17,15 @@ if (user) {
 }
 
 // Conectar ao servidor WebSocket
-const socket = io('https://seu-app-netlify.netlify.app');
+const socket = io('https://seu-app-netlify.netlify.app', {
+  transports: ['websocket'],
+  upgrade: false,
+  reconnection: true,
+  reconnectionDelay: 1000,
+  reconnectionDelayMax: 5000,
+  reconnectionAttempts: Infinity,
+});
+
 
 socket.onopen = (event) => {
     console.log('Conectado ao servidor WebSocket');
