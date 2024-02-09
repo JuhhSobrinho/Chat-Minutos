@@ -1,52 +1,39 @@
-const { createServer } = require('http');
-const { Server } = require('ws');
-const { Server: SocketServer } = require('socket.io');
+const { Server } = require('socket.io');
 
-// Criar servidor HTTP para WebSocket
-const httpServer = createServer();
+exports.handler = async (event) => {
+  // Verifica se é uma solicitação de atualização do WebSocket
+  if (event.headers.upgrade === 'websocket') {
+    const io = new Server();
+    
+    io.on('connection', (socket) => {
+      console.log('Cliente conectado via WebSocket');
 
-// Criar servidor WebSocket
-const wss = new Server({ noServer: true });
+      socket.on('message', (message) => {
+        console.log(`Mensagem recebida via WebSocket: ${message}`);
 
-wss.on('connection', (ws) => {
-  console.log('Cliente conectado via WebSocket');
+        // Lógica adicional, se necessário
 
-  ws.on('message', (message) => {
-    console.log(`Mensagem recebida via WebSocket: ${message}`);
+        // Envia uma mensagem de volta
+        socket.send('Mensagem recebida pelo servidor.');
+      });
+    });
 
-    // Encaminhar mensagem para o Socket.IO
-    io.emit('newMsg', JSON.parse(message));
-  });
-});
-
-// Criar servidor Socket.IO
-const io = new SocketServer(httpServer, {
-  cors: {
-    origin: 'https://seu-app-netlify.netlify.app',
-    methods: ['GET', 'POST']
+    // Retornar uma resposta apropriada para solicitação de upgrade WebSocket
+    return {
+      statusCode: 101, // Switching Protocols
+      headers: {
+        ...event.headers,
+        'Connection': 'upgrade',
+        'Upgrade': 'websocket',
+      },
+      body: '',
+      isBase64Encoded: false,
+    };
   }
-});
 
-io.on('connection', (socket) => {
-  console.log('Cliente conectado via Socket.IO');
-
-  socket.on('newMsg', (dadosMensagem) => {
-    console.log('Mensagem recebida via Socket.IO:', dadosMensagem);
-    // Lógica adicional, se necessário
-  });
-});
-
-// Configurar a rota /socket.io/ para o servidor Socket.IO
-io.httpServer.on('request', (request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/plain' });
-  response.end('WebSocket servidor ativo.');
-});
-
-// Lidar com upgrade para WebSocket
-httpServer.on('upgrade', (request, socket, head) => {
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
-});
-
-module.exports = { handler: httpServer };
+  // Se não for uma solicitação de upgrade WebSocket, responda como HTTP padrão
+  return {
+    statusCode: 200,
+    body: 'WebSocket servidor ativo.',
+  };
+};
