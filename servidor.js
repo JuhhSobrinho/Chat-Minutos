@@ -1,22 +1,21 @@
 const http = require('http');
 const express = require('express');
 const aplicacao = express();
-
-const port = 3000;
-
-const servidorHttp = http.createServer(aplicacao);
-const io = require('socket.io')(servidorHttp);
+const server = http.createServer(aplicacao);
+const io = require('socket.io')(server);
 
 aplicacao.use(express.static('public'));
 
-io.addListener('connection', (socket) => {
+let porta = process.env.PORT || 3000; // Usar a porta fornecida pelo ambiente ou a 3000 por padrão
+
+io.on('connection', (socket) => {
     console.log('Usuário conectado');
 
     socket.on('newMsg', (dadosMensagem) => {
         io.emit('newMsg', dadosMensagem);
     });
-})
+});
 
-servidorHttp.listen(port, '192.168.0.3');
-
-
+server.listen(porta, () => {
+    console.log(`Servidor rodando na porta ${porta}`);
+});
