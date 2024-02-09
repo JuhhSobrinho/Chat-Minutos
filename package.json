@@ -1,0 +1,23 @@
+{
+  "name": "chatserver",
+  "version": "1.0.0",
+  "description": "aplicação web para chat rapido",
+  "main": "servidor.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JuhhSobrinho/Chat-Minutos.git"
+  },
+  "author": "juliano Sobrinho",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JuhhSobrinho/Chat-Minutos/issues"
+  },
+  "homepage": "https://github.com/JuhhSobrinho/Chat-Minutos#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4"
+  }
+}
