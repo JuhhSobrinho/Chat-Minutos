@@ -1,41 +1,36 @@
 const { Server } = require('ws');
-const { Server: SocketServer } = require('socket.io');
 
-// Criar servidor WebSocket
-const wss = new Server({ noServer: true });
+let wss;
 
-// Criar servidor Socket.IO
-const io = new SocketServer({
-  cors: {
-    origin: 'https://chat-minuto.netlify.app', // Altere para o seu domínio
-    methods: ['GET', 'POST'],
-  },
-});
-
-// Lidar com conexão via WebSocket
-wss.on('connection', (ws) => {
-  console.log('Cliente conectado via WebSocket');
-
-  ws.on('message', (message) => {
-    console.log(`Mensagem recebida via WebSocket: ${message}`);
-    io.emit('newMsg', JSON.parse(message));
-  });
-});
-
-// Configurar a rota /socket.io/ para o servidor Socket.IO
-io.httpServer.on('request', (request, response) => {
-  response.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
-  response.end('WebSocket servidor ativo.');
-});
-
-// Lidar com upgrade para WebSocket
 exports.handler = async (event) => {
   const { request, socket, head } = event;
-  wss.handleUpgrade(request, socket, head, (ws) => {
-    wss.emit('connection', ws, request);
-  });
 
-  io.attach(wss);
+  if (!wss) {
+    wss = new Server({ noServer: true });
+
+    wss.on('connection', (ws) => {
+      console.log('Cliente conectado via WebSocket');
+
+      ws.on('message', (message) => {
+        console.log(`Mensagem recebida via WebSocket: ${message}`);
+        // Adapte conforme necessário para enviar a mensagem para o Socket.IO
+      });
+    });
+
+    wss.httpServer.on('request', (req, res) => {
+      res.writeHead(200, { 'Content-Type': 'text/plain', 'Access-Control-Allow-Origin': '*' });
+      res.end('WebSocket servidor ativo.');
+    });
+
+    wss.on('close', () => {
+      console.log('Conexão WebSocket fechada');
+      wss = null;
+    });
+
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit('connection', ws, request);
+    });
+  }
 
   return {
     statusCode: 200,
