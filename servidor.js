@@ -17,10 +17,6 @@ io.addListener('connection', (socket) => {
     });
 })
 
-
-
-
-
 servidorHttp.listen(port, '192.168.0.3');
 
 
